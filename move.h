@@ -11,14 +11,14 @@
 */
 
 
-typedef struct _move {
-    int from;
-    int to;
-    int piece;
-    int capture;
-    int promotion;
-    int flags;
-} Move;
+// typedef struct _move {
+//     int from;
+//     int to;
+//     int piece;
+//     int capture;
+//     int promotion;
+//     int flags;
+// } Move;
 
 #endif
 
