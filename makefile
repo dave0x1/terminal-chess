@@ -2,9 +2,9 @@ CFLAGS = -Wall -Wextra
 
 all: final
 
-final: main.o board.o attacks.o moveArray.o moveGen.o
+final: main.o board.o attacks.o moveArray.o moveGen.o utility.o
 	@echo "Linking"
-	gcc $(CFLAGS) main.o board.o attacks.o moveArray.o moveGen.o -o final
+	gcc $(CFLAGS) main.o board.o attacks.o moveArray.o moveGen.o utility.o -o final
 
 main.o: main.c
 	@echo "Compiling main file..."
@@ -25,7 +25,11 @@ moveArray.o: moveArray.c
 moveGen.o: moveGen.c
 	@echo "Compiling moveGen"
 	gcc $(CFLAGS) -c moveGen.c
+
+utility.o: utility.c
+	@echo "Compiling utility"
+	gcc $(CFLAGS) -c utility.c
 .PHONY: clean
 clean:
 	@echo "Cleaning..."
-	@rm -f main.o board.o attacks.o moveArray.o moveGen.o final
+	@rm -f main.o board.o attacks.o moveArray.o moveGen.o utility.o final

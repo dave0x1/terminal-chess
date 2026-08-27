@@ -1,0 +1,13 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-c",
+      "utility.c"
+    ],
+    "directory": "/home/david/dev/TChess",
+    "file": "/home/david/dev/TChess/utility.c"
+  }
+]

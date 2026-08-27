@@ -3,10 +3,11 @@
 #include "board.h"
 #include "attacks.h"
 #include "move.h"
+#include "moveArray.h"
+#include "moveGen.h"
+#include "utility.h"
 
-int main(){
-    init_board(&board);
-
+void pieces_test(){
     // White starts first
     assert(board.turn == 0);
 
@@ -34,5 +35,15 @@ int main(){
     assert(is_illegal_square(25) != 0);
     assert(is_square_attacked(35, 0) == 1);
     assert(is_square_attacked(35, 1) == 1);
+}
 
+void move_test(){
+
+}
+
+int main(){
+    init_board(&board);
+    MoveArray* moveArr = createMoveArray(8);
+    generateKnightMoves(1, moveArr);
+    printArray(moveArr);
 }
