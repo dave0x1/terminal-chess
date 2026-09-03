@@ -57,6 +57,8 @@ Board elements will store the address of the piece in each element, NULL for an 
 */
 
 #include "board.h"
+#include <stddef.h>
+#include "attacks.h"
 
 Board board;
 
@@ -140,9 +142,88 @@ void init_board(Board *b){
         }
     }
 
-    b->turn = 0;
+    b->white_used = 16;
+    b->black_used = 16;
+}
+
+void init_empty_board(Board *b){
+    //Initialize all board pointers to NULL
+    for(int i = 0; i < 128; i++) {
+        b->board[i] = NULL;
+    }
+
+    b->white_pieces[0].piece_value = WHITE_KING;
+    b->white_pieces[0].piece_location = NONE;
+
+    b->black_pieces[0].piece_value = BLACK_KING;
+    b->black_pieces[0].piece_location = NONE;
+
+    //Set the king pointers
+    b->white_king = &b->white_pieces[0];
+    b->black_king = &b->black_pieces[0];
+
+    //Set used indices to 1
+    b->white_used = 1;
+    b->black_used = 1;
+
+    //Other board fields
+    b->turn = WHITE;
     b->castling = 0;
-    b->enpassant_target_square = 0;
+    b->enpassant_target_square = NONE;
     b->halfmove_counter = 0;
     b->fullmove_counter = 0;
+}
+
+/*
+    What happens when a piece is captured?
+    - Change the board pointer of the captured piece to the capturing one
+    - Check if the index of the captured piece == piece_entry[used-1], if true, simply NULL that index and return
+        - if false, store the piece_location of piece_entry[used-1] in a temp variable
+        - copy the fields of piece_entry[used-1] into the captured piece's fields
+        - NULL piece_entry[used-1]
+        - Decrement used
+        - Update board[temp] to the new address
+    - Kings are never captured
+*/
+
+/*
+insert_piece(piece, square)
+    -Piece color can be derived from piece value
+    -return error if square is occupied
+    -Writes to _pieces[0] if piece is a king
+        -Returns error if the king location is already valid
+    -Writes to _pieces[used] for other pieces(piece_value & piece_location), used is incremented
+    -board[square] will now contain a pointer to the newly inserted element &_piece[used] before increment
+*/
+
+InsertStatus insert_piece(int piece, int square, Board *b){
+
+    //1. validate square
+    if(is_illegal_square(square)) return INSERT_ERROR_ILLEGAL_SQUARE;
+
+    //2. Validate piece
+    if(piece < WHITE_PAWN || piece > BLACK_KING) return INSERT_ERROR_INVALID_PIECE;
+    
+    //3. check if square is occupied
+    if(b->board[square] != NULL) return INSERT_ERROR_SQUARE_OCCUPIED;
+
+    //4. get piece array
+    Piece_entry *arr = piece < BLACK_PAWN ? b->white_pieces : b->black_pieces;
+    int *used = piece < BLACK_PAWN ? &b->white_used : &b->black_used;
+    //5. If king piece
+    if(piece == WHITE_KING || piece == BLACK_KING){
+        if(arr[0].piece_location != NONE) return INSERT_ERROR_DUPLICATE_KING;
+        arr[0].piece_location = square;
+        b->board[square] = &arr[0];
+        return INSERT_OK;
+    }
+
+    //6. Other pieces
+    arr[*used].piece_value = piece;
+    arr[*used].piece_location = square;
+    b->board[square] = &arr[*used];
+    (*used)++;
+
+    return INSERT_OK;
+
 }

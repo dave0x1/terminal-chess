@@ -16,8 +16,6 @@ They take a valid square value and return a pointer to the moveArray and appends
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "attacks.h"
-#include "move.h"
 #include "moveArray.h"
 
 MoveArray* createMoveArray(int initial_capacity){

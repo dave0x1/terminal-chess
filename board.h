@@ -26,12 +26,14 @@ typedef enum {
 
 typedef struct _piece_entry {
     Pieces piece_value; //e.g. 5: White queen
-    int piece_location; // 52: e4 
+    int piece_location; // 52: e4
 } Piece_entry;
 
 typedef struct _board {
     Piece_entry white_pieces[16];
+    int white_used;
     Piece_entry black_pieces[16];
+    int black_used;
     Piece_entry *board[128];
     Colors turn;
     int castling;
@@ -42,7 +44,17 @@ typedef struct _board {
     Piece_entry *black_king;
 } Board;
 
+typedef enum {
+    INSERT_OK,
+    INSERT_ERROR_ILLEGAL_SQUARE,
+    INSERT_ERROR_INVALID_PIECE,
+    INSERT_ERROR_SQUARE_OCCUPIED,
+    INSERT_ERROR_DUPLICATE_KING,
+} InsertStatus;
+
 void init_board(Board *board);
+void init_empty_board(Board *b);
+InsertStatus insert_piece(int piece, int square, Board *b);
 extern Board board;
 
 

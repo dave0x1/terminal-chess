@@ -1,11 +1,6 @@
-#include <stdio.h>
 #include <assert.h>
 #include "board.h"
 #include "attacks.h"
-#include "move.h"
-#include "moveArray.h"
-#include "moveGen.h"
-#include "utility.h"
 
 void pieces_test(){
     // White starts first
@@ -41,9 +36,15 @@ void move_test(){
 
 }
 
+void insert_test(){
+    
+}
+
+    // init_board(&board);
+    // MoveArray* moveArr = createMoveArray(8);
+    // generateKnightMoves(1, moveArr);
+    // printArray(moveArr);
+
 int main(){
-    init_board(&board);
-    MoveArray* moveArr = createMoveArray(8);
-    generateKnightMoves(1, moveArr);
-    printArray(moveArr);
+    init_empty_board(&board);
 }

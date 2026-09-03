@@ -15,7 +15,6 @@ They take a valid square value and return a pointer to the moveArray and appends
 
 #include <stddef.h>
 #include "moveArray.h"
-#include "move.h"
 #include "board.h"
 #include "attacks.h"
 

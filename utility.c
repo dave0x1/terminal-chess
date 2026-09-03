@@ -23,7 +23,7 @@ int square_to_string(int square, char* sq){
 }
 
 int piece_to_string(int piece, char* pc){
-    char piece_table[] = {'P', 'N', 'B', 'R', 'K', 'Q', 'p', 'n', 'b', 'r', 'k', 'q'};
+    char piece_table[] = {'P', 'N', 'B', 'R', 'Q', 'K', 'p', 'n', 'b', 'r', 'q', 'k'};
     if(piece >= 1 && piece <= 12) {
         pc[0] = piece_table[piece-1];
         pc[1] = '\0';
