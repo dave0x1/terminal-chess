@@ -227,3 +227,42 @@ InsertStatus insert_piece(int piece, int square, Board *b){
     return INSERT_OK;
 
 }
+
+RemoveStatus remove_piece(int square, Board* b){
+    //1. validate square
+    if(is_illegal_square(square)) return REMOVE_ERROR_ILLEGAL_SQUARE;
+
+    //2. check if square is empty
+    if(b->board[square] == NULL) return REMOVE_ERROR_EMPTY_SQUARE;
+
+    //remove from: board.square[], board.piece_entry[],  decrement used, if king just remove piece location;
+
+    Piece_entry* entry = b->board[square];
+    int color = entry->piece_value < BLACK_PAWN ? WHITE : BLACK;
+    Piece_entry* array = color == WHITE ? b->white_pieces : b->black_pieces;
+    int* used = color == WHITE ? &b->white_used : &b->black_used;
+
+    if(entry->piece_value == WHITE_KING || entry->piece_value == BLACK_KING){
+        //simply remove piece location for the king
+        array[0].piece_location = NONE;
+        b->board[square] = NULL;
+        return REMOVE_OK;
+    }
+    
+    int index = (int)(entry - array);
+    int last = *used - 1;
+
+   if (index != last) {
+        int moved_square = array[last].piece_location;
+        array[index] = array[last];
+        b->board[moved_square] = &array[index];
+    }
+
+    array[last].piece_location = NONE;
+    array[last].piece_value = NONE;
+
+    b->board[square] = NULL;
+    (*used)--;
+
+    return REMOVE_OK;
+}

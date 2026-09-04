@@ -36,15 +36,6 @@ void move_test(){
 
 }
 
-void insert_test(){
-    
-}
-
-    // init_board(&board);
-    // MoveArray* moveArr = createMoveArray(8);
-    // generateKnightMoves(1, moveArr);
-    // printArray(moveArr);
-
 int main(){
     init_empty_board(&board);
 }

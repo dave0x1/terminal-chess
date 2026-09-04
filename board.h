@@ -52,9 +52,16 @@ typedef enum {
     INSERT_ERROR_DUPLICATE_KING,
 } InsertStatus;
 
+typedef enum {
+    REMOVE_OK,
+    REMOVE_ERROR_ILLEGAL_SQUARE,
+    REMOVE_ERROR_EMPTY_SQUARE,
+} RemoveStatus;
+
 void init_board(Board *board);
 void init_empty_board(Board *b);
 InsertStatus insert_piece(int piece, int square, Board *b);
+RemoveStatus remove_piece(int square, Board* b);
 extern Board board;
 
 
