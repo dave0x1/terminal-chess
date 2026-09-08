@@ -1,6 +1,7 @@
 #include <assert.h>
 #include "board.h"
 #include "attacks.h"
+#include "repl.h"
 
 void pieces_test(){
     // White starts first
@@ -37,5 +38,6 @@ void move_test(){
 }
 
 int main(){
-    init_empty_board(&board);
+    init_board(&board);
+    print_board(&board);
 }
