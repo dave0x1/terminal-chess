@@ -121,7 +121,7 @@ int pawn_attacks(int square, int color){
 
 
 int walk(int square, int direction, int target_piece1, int target_piece2){
-    for(int i = 1; i < 7; i++){
+    for(int i = 1; i <= 7; i++){ //7 is the maximum number of possible moves in any direction in an 8 by 8 board
         int current_square = square + (i * direction);
         if(is_illegal_square(current_square) != 0) break;
         if (board.board[current_square] == NULL) continue;

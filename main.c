@@ -2,6 +2,8 @@
 #include "board.h"
 #include "attacks.h"
 #include "repl.h"
+#include "moveGen.h"
+#include "utility.h"
 
 void pieces_test(){
     // White starts first
@@ -37,7 +39,18 @@ void move_test(){
 
 }
 
-int main(){
-    init_board(&board);
+void move_gen_test(){
+    init_empty_board(&board);
+    MoveArray* arr = createMoveArray(20);
     print_board(&board);
+    insert_piece(WHITE_PAWN, 97, &board);
+    insert_piece(BLACK_PAWN, 112, &board);
+    // print_board(&board);
+    board.enpassant_target_square = 81;
+    generate_pawn_moves(97, arr);
+    printArray(arr);
+}
+
+int main(){
+    move_gen_test();
 }
