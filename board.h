@@ -62,7 +62,6 @@ void init_board(Board *board);
 void init_empty_board(Board *b);
 InsertStatus insert_piece(int piece, int square, Board *b);
 RemoveStatus remove_piece(int square, Board* b);
-extern Board board;
 
 
 

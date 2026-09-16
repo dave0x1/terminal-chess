@@ -40,6 +40,7 @@ void move_test(){
 }
 
 void move_gen_test(){
+    Board board;
     init_empty_board(&board);
     MoveArray* arr = createMoveArray(20);
     print_board(&board);
@@ -47,7 +48,7 @@ void move_gen_test(){
     insert_piece(BLACK_PAWN, 112, &board);
     // print_board(&board);
     board.enpassant_target_square = 81;
-    generate_pawn_moves(97, arr);
+    generate_pawn_moves(97, arr, &board);
     printArray(arr);
 }
 

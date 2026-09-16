@@ -14,6 +14,7 @@ They take a valid square value and return a pointer to the moveArray and appends
 */
 
 #include <stddef.h>
+#include "moveGen.h"
 #include "moveArray.h"
 #include "board.h"
 #include "attacks.h"
@@ -24,18 +25,18 @@ int is_enemy(int piece1, int piece2){
     return 0;
 }
 
-void generateKnightMoves(int square, MoveArray* arr){
+void generate_knight_moves(int square, MoveArray* arr, Board* b){
     //Get offsets and piece
     int offsets_array[] = {square+14, square+18, square+31, square+33, square-14, square-18, square-31, square-33};
     int len = 8;
-    int piece = board.board[square]->piece_value; //White knight: 2, Black knight: 8
+    int piece = b->board[square]->piece_value; //White knight: 2, Black knight: 8
     
 
     for (int i = 0; i < len; i++){
         if(is_illegal_square(offsets_array[i]) != 0){
             continue;
         } else {
-            int to_check = board.board[offsets_array[i]] == NULL ? -1 : board.board[offsets_array[i]]->piece_value;
+            int to_check = b->board[offsets_array[i]] == NULL ? -1 : b->board[offsets_array[i]]->piece_value;
             if(to_check == -1){//empty square
                 Move move = {
                     .from = square, 
@@ -66,16 +67,16 @@ void generateKnightMoves(int square, MoveArray* arr){
 }
 
 // Castling not included
-void generate_king_moves(int square, MoveArray* arr){
+void generate_king_moves(int square, MoveArray* arr, Board* b){
     int king_offsets[] = {square+1, square-1, square+16, square-16, square+15, square-15, square+17, square-17};
     int len = 8;
-    int piece = board.board[square]->piece_value;
+    int piece = b->board[square]->piece_value;
 
     for(int i = 0; i < len; i++){
         if(is_illegal_square(king_offsets[i]) != 0){
             continue;
         } else {
-            int to_check = board.board[king_offsets[i]] == NULL ? -1 : board.board[king_offsets[i]]->piece_value;
+            int to_check = b->board[king_offsets[i]] == NULL ? -1 : b->board[king_offsets[i]]->piece_value;
             if(to_check == -1){//empty square
                 Move move = {
                     .from = square, 
@@ -105,11 +106,11 @@ void generate_king_moves(int square, MoveArray* arr){
     }
 }
 
-void movegen_walk(int piece, int square, int direction, MoveArray* arr){
+void movegen_walk(int piece, int square, int direction, MoveArray* arr, Board* b){
     for(int i = 1; i <= 7; i++){
         int current_square = square + (i * direction);
         if(is_illegal_square(current_square) != 0) break; //Illegal square
-        if(board.board[current_square] == NULL){ //Empty square
+        if(b->board[current_square] == NULL){ //Empty square
             Move move = {
                     .from = square, 
                     .to = current_square, 
@@ -119,7 +120,7 @@ void movegen_walk(int piece, int square, int direction, MoveArray* arr){
                     .flags = 00
                 };
                 insertMove(move, arr);
-        } else if(is_enemy(piece, board.board[current_square]->piece_value)){ //Enemy piece
+        } else if(is_enemy(piece, b->board[current_square]->piece_value)){ //Enemy piece
             Move move = {
                     .from = square, 
                     .to = current_square, 
@@ -135,29 +136,29 @@ void movegen_walk(int piece, int square, int direction, MoveArray* arr){
 }
 
 
-void generate_bishop_moves(int square, MoveArray* arr){
+void generate_bishop_moves(int square, MoveArray* arr, Board* b){
     int diag_directions[] = {15, 17, -15, -17};
     int len = 4;
-    int piece = board.board[square]->piece_value;
+    int piece = b->board[square]->piece_value;
 
     for(int i = 0; i < len; i++){
-        movegen_walk(piece, square, diag_directions[i], arr);
+        movegen_walk(piece, square, diag_directions[i], arr, b);
     }
 }
 
-void generate_rook_moves(int square, MoveArray* arr){
+void generate_rook_moves(int square, MoveArray* arr, Board* b){
     int straight_directions[] = {16, 1, -16, -1};
     int len = 4;
-    int piece = board.board[square]->piece_value;
+    int piece = b->board[square]->piece_value;
 
     for(int i = 0; i < len; i++){
-        movegen_walk(piece, square, straight_directions[i], arr);
+        movegen_walk(piece, square, straight_directions[i], arr, b);
     }
 }
 
-void generate_queen_moves(int square, MoveArray* arr){
-    generate_bishop_moves(square, arr);
-    generate_rook_moves(square, arr);
+void generate_queen_moves(int square, MoveArray* arr, Board* b){
+    generate_bishop_moves(square, arr, b);
+    generate_rook_moves(square, arr, b);
 }
 
 /*
@@ -216,17 +217,17 @@ void insert_pawn_move(int from, int to, Colors color, Pieces capture, Flags flag
     }
 }
 
-void generate_pawn_moves(int square, MoveArray* arr){
-    int piece = board.board[square]->piece_value;
+void generate_pawn_moves(int square, MoveArray* arr, Board* b){
+    int piece = b->board[square]->piece_value;
     Colors color = piece == WHITE_PAWN ? WHITE: BLACK;
     int rank = (square >> 4) + 1; //0x88 rank calculation
     int single_push = color == WHITE ? square+16 : square-16;
     int double_push = color == WHITE ? square+32 : square-32;
 
     //Case 1&2: single and double pawn push
-    if(board.board[single_push] == NULL){
+    if(b->board[single_push] == NULL){
         insert_pawn_move(square, single_push, color, NONE, DEFAULT, arr);
-        if(((rank == 2 && color == WHITE) || (rank == 7 && color == BLACK)) && board.board[double_push] == NULL) {
+        if(((rank == 2 && color == WHITE) || (rank == 7 && color == BLACK)) && b->board[double_push] == NULL) {
             insert_pawn_move(square, double_push, color, NONE, DOUBLE_PAWN_PUSH, arr);
         }
     }
@@ -246,13 +247,13 @@ void generate_pawn_moves(int square, MoveArray* arr){
         int dest = square + offsets[i];
 
         //case 4: enpassant
-        if(board.enpassant_target_square == dest){
+        if(b->enpassant_target_square == dest){
             Pieces captured_pawn = color == WHITE ? BLACK_PAWN : WHITE_PAWN;
             insert_pawn_move(square, dest, color, captured_pawn, EN_PASSANT, arr);
         }
 
-        if(is_illegal_square(dest) != 0 || board.board[dest] == NULL) continue;
-        Pieces dest_piece = board.board[dest]->piece_value;
+        if(is_illegal_square(dest) != 0 || b->board[dest] == NULL) continue;
+        Pieces dest_piece = b->board[dest]->piece_value;
         if(is_enemy(piece, dest_piece)){
             insert_pawn_move(square, dest, color, dest_piece, DEFAULT, arr);
         }
@@ -281,5 +282,5 @@ In attacks.c
     king_attacks
     pawn_attacks
     walk
-    
+
 */

@@ -3,10 +3,10 @@
 
 #include "moveArray.h"
 
-void generateKnightMoves(int square, MoveArray* arr);
-void generate_bishop_moves(int square, MoveArray* arr);
-void generate_rook_moves(int square, MoveArray* arr);
-void generate_queen_moves(int square, MoveArray* arr);
-void generate_pawn_moves(int square, MoveArray* arr);
+void generate_knight_moves(int square, MoveArray* arr, Board* b);
+void generate_bishop_moves(int square, MoveArray* arr, Board* b);
+void generate_rook_moves(int square, MoveArray* arr, Board* b);
+void generate_queen_moves(int square, MoveArray* arr, Board* b);
+void generate_pawn_moves(int square, MoveArray* arr, Board* b);
 
 #endif
