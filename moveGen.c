@@ -260,3 +260,26 @@ void generate_pawn_moves(int square, MoveArray* arr){
     }
 
 }
+
+void generate_all_moves(MoveArray* arr){
+
+}
+
+/*
+board state refactor:
+List of functions that access the global board state in movegen.c
+    generate_knight_moves
+    generate_king_moves
+    movegen_walk
+    generate_bishop_moves
+    generate_rook_moves
+    generate_queen_moves
+    generate_pawn_moves
+
+In attacks.c
+    knight_attacks
+    king_attacks
+    pawn_attacks
+    walk
+    
+*/

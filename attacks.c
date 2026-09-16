@@ -30,7 +30,7 @@ int is_illegal_square(int square){
     return(square & 0x88);
 }
 
-int knight_attacks(int square, int color){
+int knight_attacks(int square, int color, Board* b){
     int offsets_array[] = {square+14, square+18, square+31, square+33, square-14, square-18, square-31, square-33};
     int len = 8;
 
@@ -38,7 +38,7 @@ int knight_attacks(int square, int color){
         if(is_illegal_square(offsets_array[i]) != 0){
             continue;
         } else {
-            int to_check = board.board[offsets_array[i]] == NULL ? -1 : board.board[offsets_array[i]]->piece_value;
+            int to_check = b->board[offsets_array[i]] == NULL ? -1 : b->board[offsets_array[i]]->piece_value;
             if (color == WHITE && to_check == WHITE_KNIGHT){
                 return 1;
             }
@@ -50,7 +50,7 @@ int knight_attacks(int square, int color){
     return 0;
 }
 
-int king_attacks(int square, int color){
+int king_attacks(int square, int color, Board* b){
     int offsets_array[] = {square+1, square-1, square+16, square-16, square+15, square-15, square+17, square-17};
     int len = 8;
 
@@ -58,7 +58,7 @@ int king_attacks(int square, int color){
         if(is_illegal_square(offsets_array[i]) != 0){
             continue;
         } else {
-            int to_check = board.board[offsets_array[i]] == NULL ? -1 : board.board[offsets_array[i]]->piece_value;
+            int to_check = b->board[offsets_array[i]] == NULL ? -1 : b->board[offsets_array[i]]->piece_value;
             if (color == WHITE && to_check == WHITE_KING){
                 return 1;
             }
@@ -70,33 +70,33 @@ int king_attacks(int square, int color){
     return 0;
 }
 
-int pawn_attacks(int square, int color){
+int pawn_attacks(int square, int color, Board* b){
     int pawn = color == WHITE ? WHITE_PAWN : BLACK_PAWN; //white pawn == 1; black pawn == 7
 
     int up_left = diag_directions[0];
-    if(is_illegal_square(square + up_left) == 0 && board.board[square + up_left] != NULL){
-        up_left = board.board[square + up_left]->piece_value;
+    if(is_illegal_square(square + up_left) == 0 && b->board[square + up_left] != NULL){
+        up_left = b->board[square + up_left]->piece_value;
     } else {
         up_left = -1;
     }
 
     int up_right = diag_directions[1];
-    if(is_illegal_square(square + up_right) == 0 && board.board[square + up_right] != NULL){
-        up_right = board.board[square + up_right]->piece_value;
+    if(is_illegal_square(square + up_right) == 0 && b->board[square + up_right] != NULL){
+        up_right = b->board[square + up_right]->piece_value;
     } else {
         up_right = -1;
     }
 
     int down_right = diag_directions[2];
-    if(is_illegal_square(square + down_right) == 0 && board.board[square + down_right] != NULL){
-        down_right = board.board[square + down_right]->piece_value;
+    if(is_illegal_square(square + down_right) == 0 && b->board[square + down_right] != NULL){
+        down_right = b->board[square + down_right]->piece_value;
     } else {
         down_right = -1;
     }
 
     int down_left = diag_directions[3];
-    if(is_illegal_square(square + down_left) == 0 && board.board[square + down_left] != NULL){
-        down_left = board.board[square + down_left]->piece_value;
+    if(is_illegal_square(square + down_left) == 0 && b->board[square + down_left] != NULL){
+        down_left = b->board[square + down_left]->piece_value;
     } else {
         down_left = -1;
     }
@@ -120,12 +120,12 @@ int pawn_attacks(int square, int color){
 }
 
 
-int walk(int square, int direction, int target_piece1, int target_piece2){
+int walk(int square, int direction, int target_piece1, int target_piece2, Board* b){
     for(int i = 1; i <= 7; i++){ //7 is the maximum number of possible moves in any direction in an 8 by 8 board
         int current_square = square + (i * direction);
         if(is_illegal_square(current_square) != 0) break;
-        if (board.board[current_square] == NULL) continue;
-        int piece = board.board[current_square]->piece_value;
+        if (b->board[current_square] == NULL) continue;
+        int piece = b->board[current_square]->piece_value;
         if(piece == target_piece1 || piece == target_piece2){
             return 1;
         } else break;
@@ -133,21 +133,21 @@ int walk(int square, int direction, int target_piece1, int target_piece2){
     return 0;
 }
 
-int is_square_attacked(int square, int color){
-    if(knight_attacks(square, color) == 1) return 1;
-    if(king_attacks(square, color) == 1) return 1;
-    if(pawn_attacks(square, color) == 1) return 1;
+int is_square_attacked(int square, int color, Board* b){
+    if(knight_attacks(square, color, b) == 1) return 1;
+    if(king_attacks(square, color, b) == 1) return 1;
+    if(pawn_attacks(square, color, b) == 1) return 1;
 
     int bishop = color == WHITE ? WHITE_BISHOP : BLACK_BISHOP;
     int rook = color == WHITE ? WHITE_ROOK : BLACK_ROOK;
     int queen = color == WHITE ? WHITE_QUEEN : BLACK_QUEEN;
 
     for(int i = 0; i < 4; i++){
-        if(walk(square, diag_directions[i], bishop, queen) == 1) return 1;
+        if(walk(square, diag_directions[i], bishop, queen, b) == 1) return 1;
     }
 
     for(int i = 0; i < 4; i++){
-        if(walk(square, straight_directions[i], rook, queen) == 1) return 1;
+        if(walk(square, straight_directions[i], rook, queen, b) == 1) return 1;
     }
 
     return 0;
