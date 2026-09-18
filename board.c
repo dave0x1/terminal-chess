@@ -60,9 +60,11 @@ Board elements will store the address of the piece in each element, NULL for an 
 #include <stddef.h>
 #include "attacks.h"
 
-Board board;
-
 void init_board(Board *b){
+
+    for(int i = 0; i < 128; i++) {
+        b->board[i] = NULL;
+    }
 
     // PAWNS
     for(int i = 0; i < 8; i++){

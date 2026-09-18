@@ -28,6 +28,28 @@ int piece_to_string(int piece, char* pc){
         pc[0] = piece_table[piece-1];
         pc[1] = '\0';
         return RESULT_OK;
+    } else if(piece == -1){
+        pc[0] = 'x';
+        pc[1] = '\0';
+    }
+    return RESULT_ERROR;
+}
+
+int flag_to_string(int flag, char* f, size_t max_len){
+    switch (flag) {
+        case 0:
+            snprintf(f, max_len, "%s", "default");
+            return RESULT_OK;
+        case 1:
+            snprintf(f, max_len, "%s", "castle");
+            return RESULT_OK;
+        case 2:
+            snprintf(f, max_len, "%s", "double pawn push");
+            return RESULT_OK;
+        case 3:
+            snprintf(f, max_len, "%s", "en passant");
+            return RESULT_OK;
+        default: return RESULT_ERROR;
     }
     return RESULT_ERROR;
 }
@@ -36,10 +58,16 @@ void printMove(Move m){
     char from[3];
     char to[3];
     char piece[2];
+    char capture[2];
+    char promotion[2];
+    char flag[20];
     square_to_string(m.from, from);
     square_to_string(m.to, to);
     piece_to_string(m.piece, piece);
-    printf("{\nfrom: %s,\nto: %s,\npiece: %s, \ncapture: %d, \npromotion: %d,\nflags: %d \n},\n", from, to, piece, m.capture, m.promotion, m.flags);
+    piece_to_string(m.capture, capture);
+    piece_to_string(m.promotion, promotion);
+    flag_to_string(m.flags, flag, 20);
+    printf("{\nfrom: %s,\nto: %s,\npiece: %s, \ncapture: %s, \npromotion: %s,\nflags: %s \n},\n", from, to, piece, capture, promotion, flag);
 }
 
 void printArray(MoveArray* arr){

@@ -42,8 +42,8 @@ void generate_knight_moves(int square, MoveArray* arr, Board* b){
                     .from = square, 
                     .to = offsets_array[i], 
                     .piece = piece,
-                    .capture = 0,
-                    .promotion = 0, 
+                    .capture = NONE,
+                    .promotion = NONE, 
                     .flags = 00
                 };
                 insertMove(move, arr);
@@ -54,8 +54,8 @@ void generate_knight_moves(int square, MoveArray* arr, Board* b){
                     .from = square, 
                     .to = offsets_array[i], 
                     .piece = piece,
-                    .capture = 1,
-                    .promotion = 0, 
+                    .capture = to_check,
+                    .promotion = NONE, 
                     .flags = 00
                 };
                 insertMove(move, arr);
@@ -82,8 +82,8 @@ void generate_king_moves(int square, MoveArray* arr, Board* b){
                     .from = square, 
                     .to = king_offsets[i], 
                     .piece = piece,
-                    .capture = 0,
-                    .promotion = 0, 
+                    .capture = NONE,
+                    .promotion = NONE, 
                     .flags = 00
                 };
                 insertMove(move, arr);
@@ -94,8 +94,8 @@ void generate_king_moves(int square, MoveArray* arr, Board* b){
                     .from = square, 
                     .to = king_offsets[i], 
                     .piece = piece,
-                    .capture = 1,
-                    .promotion = 0, 
+                    .capture = to_check,
+                    .promotion = NONE, 
                     .flags = 00
                 };
                 insertMove(move, arr);
@@ -115,8 +115,8 @@ void movegen_walk(int piece, int square, int direction, MoveArray* arr, Board* b
                     .from = square, 
                     .to = current_square, 
                     .piece = piece,
-                    .capture = 0,
-                    .promotion = 0, 
+                    .capture = NONE,
+                    .promotion = NONE, 
                     .flags = 00
                 };
                 insertMove(move, arr);
@@ -125,8 +125,8 @@ void movegen_walk(int piece, int square, int direction, MoveArray* arr, Board* b
                     .from = square, 
                     .to = current_square, 
                     .piece = piece,
-                    .capture = 1,
-                    .promotion = 0, 
+                    .capture = b->board[current_square]->piece_value,
+                    .promotion = NONE, 
                     .flags = 00
                 };
                 insertMove(move, arr);
@@ -262,25 +262,40 @@ void generate_pawn_moves(int square, MoveArray* arr, Board* b){
 
 }
 
-void generate_all_moves(MoveArray* arr){
-
+//Generate pseudo-legal moves
+void generate_all_moves(MoveArray* arr, Board* b){
+    Piece_entry* pieces_arr = b->turn == WHITE ? b->white_pieces : b->black_pieces;
+    int max_len = 16;
+    for(int i = 0; i < max_len; i++){
+        Piece_entry p = pieces_arr[i];
+        switch (p.piece_value) {
+            case NONE:
+                break;
+            case WHITE_PAWN:
+            case BLACK_PAWN:
+                generate_pawn_moves(p.piece_location, arr, b);
+                break;
+            case WHITE_KNIGHT:
+            case BLACK_KNIGHT:
+                generate_knight_moves(p.piece_location, arr, b);
+                break;
+            case WHITE_BISHOP:
+            case BLACK_BISHOP:
+                generate_bishop_moves(p.piece_location, arr, b);
+                break;
+            case WHITE_ROOK:
+            case BLACK_ROOK:
+                generate_rook_moves(p.piece_location, arr, b);
+                break;
+            case WHITE_QUEEN:
+            case BLACK_QUEEN:
+                generate_queen_moves(p.piece_location, arr, b);
+                break;
+            case WHITE_KING:
+            case BLACK_KING:
+                generate_king_moves(p.piece_location, arr, b);
+                break;
+            default: break;
+        }
+    }
 }
-
-/*
-board state refactor:
-List of functions that access the global board state in movegen.c
-    generate_knight_moves
-    generate_king_moves
-    movegen_walk
-    generate_bishop_moves
-    generate_rook_moves
-    generate_queen_moves
-    generate_pawn_moves
-
-In attacks.c
-    knight_attacks
-    king_attacks
-    pawn_attacks
-    walk
-
-*/
