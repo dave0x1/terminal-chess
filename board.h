@@ -1,7 +1,7 @@
 #ifndef BOARD_H
 #define BOARD_H
 
-
+#include <stdint.h>
 
 typedef enum {
     WHITE = 0,
@@ -24,6 +24,13 @@ typedef enum {
     BLACK_KING
 } Pieces;
 
+typedef enum {
+    WHITE_KINGSIDE = (1 << 0),
+    WHITE_QUEENSIDE = (1 << 1),
+    BLACK_KINGSIDE = (1 << 2),
+    BLACK_QUEENSIDE = (1 << 3)
+} Castling;
+
 typedef struct _piece_entry {
     Pieces piece_value; //e.g. 5: White queen
     int piece_location; // 52: e4
@@ -36,7 +43,7 @@ typedef struct _board {
     int black_used;
     Piece_entry *board[128];
     Colors turn;
-    int castling;
+    uint8_t castling;
     int enpassant_target_square;
     int halfmove_counter;
     int fullmove_counter;

@@ -41,14 +41,19 @@ void move_test(){
 
 void move_gen_test(){
     Board board;
-    init_board(&board);
+    init_empty_board(&board);
     MoveArray* arr = createMoveArray(20);
+    insert_piece(WHITE_KING, 4, &board);
+    insert_piece(WHITE_ROOK, 0, &board);
+    insert_piece(WHITE_ROOK, 7, &board);
+
     print_board(&board);
-    // insert_piece(WHITE_PAWN, 97, &board);
-    // insert_piece(BLACK_PAWN, 112, &board);
-    // print_board(&board);
-    // board.enpassant_target_square = 81;
-    // generate_pawn_moves(97, arr, &board);
+
+    // for(int i = 0; i < 16; i++){
+    //     printf("value: %d \nlocation: %d \n\n", board.white_pieces[i].piece_value, board.white_pieces[i].piece_location);
+    // }
+
+    generate_all_moves(arr, &board);
     printArray(arr);
 }
 
@@ -62,6 +67,6 @@ void gen_all_test(){
 }
 
 int main(){
-    gen_all_test();
-    // move_gen_test();
+    // gen_all_test();
+    move_gen_test();
 }

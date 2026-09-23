@@ -106,6 +106,74 @@ void generate_king_moves(int square, MoveArray* arr, Board* b){
     }
 }
 
+enum {
+    KINGSIDE,
+    QUEENSIDE
+};
+
+int check_castling(int square, Board* b, int color, int side){
+    int enemy_color = color == WHITE ? BLACK : WHITE;
+    if(is_square_attacked(square, enemy_color, b)) return 0;
+
+    int squares[3];
+    if(side == KINGSIDE){
+        squares[0] = square+1;
+        squares[1] = square+2;
+    } else {
+        squares[0] = square-1;
+        squares[1] = square-2;
+        squares[2] = square-3;
+    }
+    int len = side == KINGSIDE ? 2 : 3;
+
+    for(int i = 0; i < len; i++){
+        if(b->board[squares[i]] != NULL){
+            return 0;
+        }
+    }
+    for(int i = 0; i < 2; i++){
+        if(is_square_attacked(squares[i], enemy_color, b)){
+            return 0;
+        }
+    }
+    return 1;
+}
+
+void generate_castling_moves(int square, MoveArray* arr, Board* b){
+    int piece = b->board[square]->piece_value;
+    int color = piece == WHITE_KING ? WHITE : BLACK;
+    int kingside = piece == WHITE_KING ? WHITE_KINGSIDE : BLACK_KINGSIDE;
+    int queenside = piece == WHITE_KING ? WHITE_QUEENSIDE : BLACK_QUEENSIDE;
+
+    if(b->castling & kingside) {
+        if(check_castling(square, b, color, KINGSIDE)) {
+            Move move = {
+                .from = square, 
+                .to = square + 2, 
+                .piece = piece,
+                .capture = NONE,
+                .promotion = NONE, 
+                .flags = CASTLE
+            };
+            insertMove(move, arr);
+        }
+    }
+
+    if(b->castling & queenside){
+        if(check_castling(square, b, color, QUEENSIDE)) {
+            Move move = {
+                .from = square, 
+                .to = square - 2, 
+                .piece = piece,
+                .capture = NONE,
+                .promotion = NONE, 
+                .flags = CASTLE
+            };
+            insertMove(move, arr);
+        }
+    }
+}
+
 void movegen_walk(int piece, int square, int direction, MoveArray* arr, Board* b){
     for(int i = 1; i <= 7; i++){
         int current_square = square + (i * direction);
@@ -265,9 +333,11 @@ void generate_pawn_moves(int square, MoveArray* arr, Board* b){
 //Generate pseudo-legal moves
 void generate_all_moves(MoveArray* arr, Board* b){
     Piece_entry* pieces_arr = b->turn == WHITE ? b->white_pieces : b->black_pieces;
+    int used = b->turn == WHITE ? b->white_used : b->black_used;
     int max_len = 16;
-    for(int i = 0; i < max_len; i++){
+    for(int i = 0; i < used; i++){
         Piece_entry p = pieces_arr[i];
+        if(p.piece_location == NONE) continue;
         switch (p.piece_value) {
             case NONE:
                 break;
@@ -294,6 +364,7 @@ void generate_all_moves(MoveArray* arr, Board* b){
             case WHITE_KING:
             case BLACK_KING:
                 generate_king_moves(p.piece_location, arr, b);
+                generate_castling_moves(p.piece_location, arr, b);
                 break;
             default: break;
         }

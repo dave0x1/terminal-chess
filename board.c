@@ -146,6 +146,13 @@ void init_board(Board *b){
 
     b->white_used = 16;
     b->black_used = 16;
+
+    //Other board fields
+    b->turn = WHITE;
+    b->castling = 0b1111;
+    b->enpassant_target_square = NONE;
+    b->halfmove_counter = 0;
+    b->fullmove_counter = 0;
 }
 
 void init_empty_board(Board *b){
@@ -170,7 +177,7 @@ void init_empty_board(Board *b){
 
     //Other board fields
     b->turn = WHITE;
-    b->castling = 0;
+    b->castling = 0b1111;
     b->enpassant_target_square = NONE;
     b->halfmove_counter = 0;
     b->fullmove_counter = 0;
