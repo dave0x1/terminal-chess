@@ -4,6 +4,8 @@
 #include "repl.h"
 #include "moveGen.h"
 #include "utility.h"
+#include "move.h"
+#include <stdio.h>
 
 void pieces_test(Board* b){
     // White starts first
@@ -35,10 +37,6 @@ void pieces_test(Board* b){
     assert(is_square_attacked(35, 1, b) == 1);
 }
 
-void move_test(){
-
-}
-
 void move_gen_test(){
     Board board;
     init_empty_board(&board);
@@ -46,12 +44,14 @@ void move_gen_test(){
     insert_piece(WHITE_KING, 4, &board);
     insert_piece(WHITE_ROOK, 0, &board);
     insert_piece(WHITE_ROOK, 7, &board);
+    insert_piece(BLACK_ROOK, 20, &board);
 
     print_board(&board);
 
     // for(int i = 0; i < 16; i++){
     //     printf("value: %d \nlocation: %d \n\n", board.white_pieces[i].piece_value, board.white_pieces[i].piece_location);
     // }
+    board.turn = BLACK;
 
     generate_all_moves(arr, &board);
     printArray(arr);
@@ -66,7 +66,31 @@ void gen_all_test(){
     printArray(test_arr);
 }
 
+void move_test(){
+    Board board;
+    Board_history history;
+    history.used = 0;
+    init_empty_board(&board);
+    insert_piece(WHITE_KING, 4, &board);
+    insert_piece(WHITE_ROOK, 0, &board);
+    insert_piece(WHITE_ROOK, 7, &board);
+    MoveArray* arr = createMoveArray(20);
+    print_board(&board);
+    generate_all_moves(arr, &board);
+    printArray(arr);
+    printf("\n%d\n", board.white_pieces[0].piece_location);
+
+    if(make_move(arr->list[3], &board, &history) == 1){
+        printf("\nMove made\n");
+    }
+    // printf("\n%d\n", board.white_pieces[0].piece_location);
+    // printf("\n%d\n", board.board[5]->piece_value);
+    print_board(&board);
+    // printArray(arr);
+
+}
 int main(){
     // gen_all_test();
-    move_gen_test();
+    // move_gen_test();
+    move_test();
 }
