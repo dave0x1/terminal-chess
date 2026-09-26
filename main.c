@@ -71,23 +71,22 @@ void move_test(){
     Board_history history;
     history.used = 0;
     init_empty_board(&board);
-    insert_piece(WHITE_KING, 4, &board);
-    insert_piece(WHITE_ROOK, 0, &board);
-    insert_piece(WHITE_ROOK, 7, &board);
+    insert_piece(WHITE_PAWN, 18, &board);
+    insert_piece(BLACK_ROOK, 117, &board);
+    // insert_piece(WHITE_ROOK, 7, &board);
+    // board.enpassant_target_square = 85;
     MoveArray* arr = createMoveArray(20);
     print_board(&board);
+    print_board_state(&board);
+    
     generate_all_moves(arr, &board);
     printArray(arr);
-    printf("\n%d\n", board.white_pieces[0].piece_location);
 
-    if(make_move(arr->list[3], &board, &history) == 1){
+    if(make_move(arr->list[1], &board, &history) == 1){
         printf("\nMove made\n");
     }
-    // printf("\n%d\n", board.white_pieces[0].piece_location);
-    // printf("\n%d\n", board.board[5]->piece_value);
     print_board(&board);
-    // printArray(arr);
-
+    print_board_state(&board);
 }
 int main(){
     // gen_all_test();

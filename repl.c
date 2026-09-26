@@ -56,3 +56,14 @@ void print_board(Board* b){
     printf("\n      a   b   c   d   e   f   g   h \n");
 
 }
+
+void print_board_state(Board* b){
+    printf("\n-------------Board state--------------\n");
+    printf("White used: %d\n", b->white_used);
+    printf("Black used: %d\n", b->black_used);
+    printf("Turn: %c\n", b->turn == WHITE ? 'w' : 'b');
+    printf("Castling: %d\n", b->castling);
+    printf("enpassant_target_square: %d\n", b->enpassant_target_square);
+    printf("Half moves: %d\n", b->halfmove_counter);
+    printf("Full moves: %d\n", b->fullmove_counter);
+}

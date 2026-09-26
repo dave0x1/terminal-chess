@@ -73,6 +73,7 @@ void printMove(Move m){
 void printArray(MoveArray* arr){
     printf("\n-------------------------Printing moves------------------------------\n");
     for(int i = 0; i < arr->used; i++){
+        printf("%d", i);
         printMove(arr->list[i]);
     }
 }

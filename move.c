@@ -99,50 +99,52 @@ MAKE_MOVE_STATUS make_move(Move m, Board* b, Board_history* bh){
     if(insert_history(previous, bh) == 0){
         return MAKE_MOVE_ERROR;
     }
+    Piece_entry* piece = b->board[m.from];
     Colors color = m.piece < BLACK_PAWN ? WHITE : BLACK;
     int enpassant_square = NONE;
     switch (m.flags) {
         case CASTLE:
-            Piece_entry* king = b->board[m.from];
             Piece_entry* rook;
             int side = m.from < m.to ? KINGSIDE : QUEENSIDE;
-            Castling flag;
             if(side == KINGSIDE){
                 if(color == WHITE){
                     rook = b->board[7];
-                    flag = WHITE_KINGSIDE;
                 } else {
                     rook = b->board[119];
-                    flag = BLACK_KINGSIDE;
                 }
             } else {
                 if(color == WHITE){
                     rook = b->board[0];
-                    flag = WHITE_QUEENSIDE;
                 } else {
                     rook = b->board[112];
-                    flag = BLACK_QUEENSIDE;
                 }
             }
-            king->piece_location = m.to;
+            
             int prev_rook_location = rook->piece_location;
             rook->piece_location = side == KINGSIDE ? m.to - 1 : m.to + 1;
-            b->board[m.from] = NULL;
-            b->board[m.to] = king;
             b->board[rook->piece_location] = rook;
             b->board[prev_rook_location] = NULL;
             break;
         case DEFAULT:
-            Piece_entry* piece = b->board[m.from];
             if(m.capture != -1){
                 remove_piece(m.to, b);
             }
-            piece->piece_location = m.to;
-            b->board[m.from] = NULL;
-            b->board[m.to] = piece;
+            break;
+        case EN_PASSANT:
+            int captured_square = color == WHITE ? m.to - 16 : m.to + 16;
+            remove_piece(captured_square, b);
+            break;
+        case DOUBLE_PAWN_PUSH:
+            enpassant_square = color == WHITE ? m.to - 16 : m.to + 16;
             break;
         default: return MAKE_MOVE_ERROR;
     }
+    if(m.promotion != NONE){
+        piece->piece_value = m.promotion;
+    }
+    piece->piece_location = m.to;
+    b->board[m.from] = NULL;
+    b->board[m.to] = piece;
     set_castling(color, b);
     b->turn = color == WHITE ? BLACK : WHITE;
     b->enpassant_target_square = enpassant_square;
