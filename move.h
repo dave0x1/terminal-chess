@@ -28,6 +28,11 @@ typedef enum {
     MAKE_MOVE_SUCCESS
 } MAKE_MOVE_STATUS;
 
+typedef enum {
+    UNMAKE_MOVE_ERROR,
+    UNMAKE_MOVE_SUCCESS
+} UNMAKE_MOVE_STATUS;
+
 typedef struct _prev_move{
     Move move_made;
     uint8_t prev_castling_rights;
@@ -42,4 +47,5 @@ typedef struct _board_history{
 
 
 MAKE_MOVE_STATUS make_move(Move m, Board* b, Board_history* bh);
+UNMAKE_MOVE_STATUS unmake_move(Board* b, Board_history* bh);
 #endif

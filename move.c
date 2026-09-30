@@ -159,3 +159,67 @@ MAKE_MOVE_STATUS make_move(Move m, Board* b, Board_history* bh){
 
     return MAKE_MOVE_SUCCESS;
 }
+
+/*
+    unmake_move(Board* b, Board_history* bh)
+    DEFAULT: 
+*/
+
+UNMAKE_MOVE_STATUS unmake_move(Board* b, Board_history* bh){
+    Prev_move prev = bh->list[bh->used - 1];
+    Move m = prev.move_made;
+    Piece_entry* piece = b->board[m.to];
+    Colors color = m.piece < BLACK_PAWN ? WHITE : BLACK;
+
+    switch (m.flags) {
+        case DEFAULT:
+            break;
+        case CASTLE:
+            int side = m.from < m.to ? KINGSIDE : QUEENSIDE;
+            Piece_entry* rook = side == KINGSIDE ? b->board[m.to - 1] : b->board[m.to + 1];
+            int rook_home_sq;
+            if(side == KINGSIDE){
+                rook_home_sq = color == WHITE ? 7 : 119;
+            } else {
+                rook_home_sq = color == WHITE ? 0 : 112;
+            }
+            b->board[rook->piece_location] = NULL;
+            rook->piece_location = rook_home_sq;
+            b->board[rook_home_sq] = rook;
+            break;
+        case EN_PASSANT:
+            int captured_square = color == WHITE ? m.to - 16 : m.to + 16;
+            Pieces captured_pawn = color == WHITE ? BLACK_PAWN : WHITE_PAWN;
+            insert_piece(captured_pawn, captured_square, b);
+
+            break;
+        case DOUBLE_PAWN_PUSH:
+            break;
+        default: return UNMAKE_MOVE_ERROR;
+    }
+
+    if(m.promotion != NONE){
+        piece->piece_value = color == WHITE ? WHITE_PAWN : BLACK_PAWN;
+    }
+    piece->piece_location = m.from;
+    b->board[m.from] = piece;
+    
+    b->board[m.to] = NULL;
+    if(m.capture != NONE && m.flags != EN_PASSANT){
+        if(insert_piece(m.capture, m.to, b) != INSERT_OK){
+            return UNMAKE_MOVE_ERROR;
+        }
+    }
+    
+    b->castling = prev.prev_castling_rights;
+    b->enpassant_target_square = prev.prev_enpassant_square;
+    b->halfmove_counter = prev.prev_halfmove_counter;
+    b->turn = color;
+    if(color == BLACK){
+        b->fullmove_counter--;
+    }
+
+    bh->used--;
+
+    return UNMAKE_MOVE_SUCCESS;
+}
