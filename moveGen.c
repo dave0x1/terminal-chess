@@ -334,6 +334,7 @@ void generate_pawn_moves(int square, MoveArray* arr, Board* b){
 void generate_all_moves(MoveArray* arr, Board* b){
     Piece_entry* pieces_arr = b->turn == WHITE ? b->white_pieces : b->black_pieces;
     int used = b->turn == WHITE ? b->white_used : b->black_used;
+    arr->used = 0;
     for(int i = 0; i < used; i++){
         Piece_entry p = pieces_arr[i];
         if(p.piece_location == NONE) continue;
