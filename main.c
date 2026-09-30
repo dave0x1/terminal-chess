@@ -71,52 +71,23 @@ void move_test(){
     Board_history history;
     history.used = 0;
     init_empty_board(&board);
-    insert_piece(WHITE_PAWN, 16, &board);
-    insert_piece(BLACK_PAWN, 103, &board);
+    // insert_piece(WHITE_ROOK, 16, &board);
+    insert_piece(WHITE_KING, 0, &board);
+    insert_piece(BLACK_QUEEN, 33, &board);
     MoveArray* arr = createMoveArray(20);
+    set_castling(WHITE, &board);
     print_board(&board);
     print_board_state(&board);
-    
+    printf("\nHistory.used: %d\n", history.used);
+
     generate_all_moves(arr, &board);
     printArray(arr);
-
-    
-    if(make_move(arr->list[0], &board, &history) == MAKE_MOVE_SUCCESS){
-        printf("\nMove made\n");
-        // printf("\nHistory Used: %d\n", history.used);
-        print_board(&board);
-        print_board_state(&board);
-    }
-    generate_all_moves(arr, &board);
+    generate_legal_moves(arr, &board, &history);
     printArray(arr);
-    // generate_all_moves(arr, &board);
-    // printArray(arr);
-
-    // if(make_move(arr->list[31], &board, &history) == MAKE_MOVE_SUCCESS){
-    //     printf("\nMove made\n");
-    //     printf("\nHistory Used: %d\n", history.used);
-    //     print_board(&board);
-    //     print_board_state(&board);
-    // }
-
-    // if(unmake_move(&board, &history) == UNMAKE_MOVE_SUCCESS){
-    //     printf("\nTakeback!!\n");
-    //     printf("\nHistory Used: %d\n", history.used);
-    //     print_board(&board);
-    //     print_board_state(&board);
-    // } else {
-    //     printf("\nTakeback failed??\n");
-    // }
-
-    // if(unmake_move(&board, &history) == UNMAKE_MOVE_SUCCESS){
-    //     printf("\nTakeback!!\n");
-    //     printf("\nHistory Used: %d\n", history.used);
-    //     print_board(&board);
-    //     print_board_state(&board);
-    // } else {
-    //     printf("\nTakeback failed??\n");
-    // }
-
+    print_board(&board);
+    print_board_state(&board);
+    printf("\nHistory.used: %d\n", history.used);
+    
 }
 int main(){
     // gen_all_test();

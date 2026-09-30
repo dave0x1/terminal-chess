@@ -1,8 +1,8 @@
 #ifndef MOVE_H
 #define MOVE_H
 
-#include "moveArray.h"
 #include <stdint.h>
+#include "board.h"
 /*
     The move data structure
     from, to: square indexes. There will be a parser to convert algebraic notation into 0x88 index
@@ -23,6 +23,24 @@
 // } Move;
 
 #define MOVE_LIMIT 32768
+
+typedef enum {
+    DEFAULT,
+    CASTLE,
+    DOUBLE_PAWN_PUSH,
+    EN_PASSANT
+} Flags;
+
+
+typedef struct _move {
+    int from;
+    int to;
+    Pieces piece;
+    Pieces capture;
+    Pieces promotion;
+    Flags flags;
+} Move;
+
 typedef enum {
     MAKE_MOVE_ERROR,
     MAKE_MOVE_SUCCESS
@@ -48,4 +66,5 @@ typedef struct _board_history{
 
 MAKE_MOVE_STATUS make_move(Move m, Board* b, Board_history* bh);
 UNMAKE_MOVE_STATUS unmake_move(Board* b, Board_history* bh);
+void set_castling(Colors color, Board* b);
 #endif

@@ -13,11 +13,13 @@ The move generators are separated by piece types (e.g generateKnightMoves(square
 They take a valid square value and return a pointer to the moveArray and appends moves to it(defined above)
 */
 
+#include <assert.h>
 #include <stddef.h>
 #include "moveGen.h"
 #include "moveArray.h"
 #include "board.h"
 #include "attacks.h"
+#include "move.h"
 
 int is_enemy(int piece1, int piece2){
     if(piece1 < BLACK_PAWN && piece2 >= BLACK_PAWN) return 1; //p1 white, p2 black
@@ -369,4 +371,43 @@ void generate_all_moves(MoveArray* arr, Board* b){
             default: break;
         }
     }
+}
+
+/*
+    Generate Legal moves(MoveArray* arr, Board* b, Board_History* bh):
+    - color = b->turn
+    - opposite color = black if color is white, white is color is black 
+    - king = b->*_king; * = color
+    - generate_all_moves()
+    - write_index = 0
+    - read_index = 0
+    - while read_index < arr.used
+        - if make move(arr[read_index], b, bh) == MAKE_MOVE_ERROR, print error, break
+        - if legal (meaning the king of the moving side is not in check): is_square_attacked(king->piece_location, opposite color, b)
+            - arr[write_index] = arr[read_index]
+            - write_index++
+        - unmake move
+        - read_index++
+    - arr.used = write_index
+*/
+
+void generate_legal_moves(MoveArray* arr, Board* b, Board_history* bh){
+    Colors color = b->turn;
+    Colors opp_color = color == WHITE ? BLACK : WHITE;
+    Piece_entry* king = color == WHITE ? b->white_king : b->black_king;
+    generate_all_moves(arr, b);
+    int write_index = 0;
+    int read_index = 0;
+    while(read_index < arr->used){
+        MAKE_MOVE_STATUS move_status = make_move(arr->list[read_index], b, bh);
+        assert( move_status == MAKE_MOVE_SUCCESS);
+        if(is_square_attacked(king->piece_location, opp_color, b) == 0){
+            arr->list[write_index] = arr->list[read_index];
+            write_index++;
+        }
+        unmake_move(b, bh);
+        read_index++;
+    }
+    arr->used = write_index;
+
 }

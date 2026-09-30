@@ -2,24 +2,7 @@
 #define MOVEARRAY_H
 
 #include "board.h"
-
-typedef enum {
-    DEFAULT,
-    CASTLE,
-    DOUBLE_PAWN_PUSH,
-    EN_PASSANT
-} Flags;
-
-
-
-typedef struct _move {
-    int from;
-    int to;
-    Pieces piece;
-    Pieces capture;
-    Pieces promotion;
-    Flags flags;
-} Move;
+#include "move.h"
 
 typedef struct _moveArray{
     int capacity;
@@ -29,5 +12,6 @@ typedef struct _moveArray{
 
 MoveArray* createMoveArray(int initial_capacity);
 void insertMove(Move m, MoveArray* arr);
+void generate_legal_moves(MoveArray* arr, Board* b, Board_history* bh);
 
 #endif
