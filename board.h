@@ -67,6 +67,7 @@ typedef enum {
 
 void init_board(Board *board);
 void init_empty_board(Board *b);
+void copy_board(Board* source, Board* dest);
 InsertStatus insert_piece(int piece, int square, Board *b);
 RemoveStatus remove_piece(int square, Board* b);
 

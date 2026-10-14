@@ -275,3 +275,19 @@ RemoveStatus remove_piece(int square, Board* b){
 
     return REMOVE_OK;
 }
+
+void copy_board(Board* source, Board* dest){
+    *dest = *source;
+    for(int i = 0; i < 128; i++) {
+        dest->board[i] = NULL;
+    }
+    for(int i = 0; i < dest->white_used; i++){
+        dest->board[dest->white_pieces[i].piece_location] = &dest->white_pieces[i];
+    }
+    for(int i = 0; i < dest->black_used; i++){
+        dest->board[dest->black_pieces[i].piece_location] = &dest->black_pieces[i];
+    }
+    dest->white_king = &dest->white_pieces[0];
+    dest->black_king = &dest->black_pieces[0];
+
+}
